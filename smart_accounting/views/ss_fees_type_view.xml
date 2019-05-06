@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record model="ir.ui.view" id="ss_account_fees_type_form">
+		<field name="name">ss.fees.type.form</field>
+		<field name="model">ss.fees.type</field>
+		<field name="type">form</field>
+		<field name="arch" type="xml">
+			<form string="Fees Types">
+				<sheet>
+					<group string="Fees Types" col="4" colspan="2">
+						<field name="name"/>
+						<field name="code"/>
+						<field name="fees_type"/>
+						<field name="description"/>
+						<field name="to_invoice"/>
+						<field name="account_id" required="1"/>
+						<field name="company_id" groups="base.group_multi_company" widget="selection"/>
+					</group>
+					<group string="More" col="4" colspan="2" groups="base.group_no_one">
+						<field name="sequence_id"/>
+						<field name="journal_id"/>
+					</group>
+				</sheet>
+			</form>
+		</field>
+	</record>
+
+	<record model="ir.ui.view" id="ss_account_fees_type_tree">
+		<field name="name">ss.fees.type.tree</field>
+		<field name="model">ss.fees.type</field>
+		<field name="type">tree</field>
+		<field name="arch" type="xml">
+			<tree string="Fees Types">
+				<field name="name"/>
+				<field name="code"/>
+				<field name="fees_type"/>
+				<field name="company_id" groups="base.group_multi_company"/>
+			</tree>
+		</field>
+	</record>
+
+	<record id="view_ss_account_fees_type_search" model="ir.ui.view">
+		<field name="name">ss.fees.type.search</field>
+		<field name="model">ss.fees.type</field>
+		<field name="priority" eval="8" />
+		<field name="arch" type="xml">
+			<search string="Fees Structure">
+				<field name="name" />
+				<field name="code" />
+				<newline />
+				<group expand="0" string="Group By...">
+					<filter string="Name" domain="[]" context="{'group_by':'name'}" />
+					<filter string="Code" domain="[]" context="{'group_by':'code'}" />
+					<filter string="Fees Type" domain="[]" context="{'group_by':'fees_type'}" />
+				</group>
+			</search>
+		</field>
+	</record>
+
+	<record model="ir.actions.act_window" id="act_open_ss_account_fees_type_view">
+		<field name="name">Fees Types</field>
+		<field name="res_model">ss.fees.type</field>
+		<field name="view_type">form</field>
+		<field name="view_mode">tree,form</field>
+	</record>
+
+</odoo>

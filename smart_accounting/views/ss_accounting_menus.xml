@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+<!--    Fee Management Menus-->
+    <menuitem
+        id="menu_fee_management_root"
+        name="Fees"
+        sequence="23"/>
+
+        <menuitem
+            id="menu_fee_management_fee_categ"
+            name="Fees"
+            parent="menu_fee_management_root"
+            sequence="1"/>
+
+            <menuitem
+                id="menu_fee_management_fee_list_current"
+                name="Current Fees"
+                parent="menu_fee_management_fee_categ"
+                action="action_ss_fee_academics_current"
+                sequence="1"/>
+
+            <menuitem
+                id="menu_fee_management_fee_list_upcoming"
+                name="Upcoming Fees"
+                parent="menu_fee_management_fee_categ"
+                action="action_ss_fee_academics_upcoming"
+                sequence="2"/>
+
+            <menuitem
+                id="menu_fee_management_fee_list"
+                name="All Fees"
+                parent="menu_fee_management_fee_categ"
+                action="action_ss_fee_academics"
+                sequence="3"/>
+
+        <menuitem
+            id="menu_fee_management_fee_all"
+            name="External Fees"
+            parent="menu_fee_management_root"
+            action="action_ss_fee_external"
+            sequence="2"/>
+
+        <menuitem
+            id="menu_fee_management_fee_payments_main"
+            name="Fee Payments"
+            parent="menu_fee_management_root"
+            sequence="3"/>
+
+            <menuitem
+                id="menu_fee_management_fee_payments"
+                name="Payments"
+                parent="menu_fee_management_fee_payments_main"
+                action="action_fee_account_payments"
+                sequence="1"/>
+
+        <menuitem
+            id="menu_fee_management_accounting_categ"
+            name="Accounting"
+            parent="menu_fee_management_root"
+            sequence="4"/>
+
+     <menuitem
+            id="menu_fee_management_report"
+            name="Reports"
+            parent="menu_fee_management_root"
+           sequence="5"/>
+
+            <menuitem
+                id="menu_fee_collection_report"
+                name="Collection Report"
+                parent="menu_fee_management_report"
+                action="act_fee_collection_report"/>
+
+        <menuitem
+            id="menu_fee_management_configurations_categ"
+            name="Configurations"
+            parent="menu_fee_management_root"
+            sequence="6"/>
+
+            <menuitem
+                id="menu_fee_management_conf_ss_fees_type_sub"
+                name="Fee Types"
+                parent="menu_fee_management_configurations_categ"
+                sequence="1"
+                action="act_open_ss_account_fees_type_view"/>
+
+            <menuitem
+                id="menu_fee_management_conf_fee_group"
+                name="Fee Group"
+                parent="menu_fee_management_configurations_categ"
+                action="fee_group_action"
+                sequence="2"/>
+
+            <menuitem
+                id="menu_fee_management_conf_fee_structure"
+                name="Fee Structures"
+                parent="menu_fee_management_configurations_categ"
+                action="fee_structure_action"
+                sequence="3"/>
+
+            <menuitem
+                id="menu_fee_management_conf_settings"
+                name="Settings"
+                parent="menu_fee_management_configurations_categ"
+                sequence="10"
+                action="fee_config_settings_action"/>
+
+<!--    Fee Configuration Menus under Administration-->
+    <menuitem
+        id="menu_account_fee_configuration"
+        name="Fees"
+        parent="smartschool_base.menu_administration_root"
+        groups="account.group_account_user"
+        sequence="5"/>
+
+        <menuitem
+            id="menu_account_ss_fees_type_sub"
+            name="Fee Types"
+            parent="menu_account_fee_configuration"
+            sequence="5"
+            action="act_open_ss_account_fees_type_view"/>
+
+        <menuitem
+            id="menu_fee_group"
+            name="Fee Group"
+            parent="menu_account_fee_configuration"
+            action="fee_group_action"
+            sequence="8"/>
+
+        <menuitem
+            id="menu_fee_structure"
+            name="Fee Structures"
+            parent="smart_accounting.menu_account_fee_configuration"
+            action="fee_structure_action"
+            sequence="10"/>
+
+</odoo>

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="fee_structure_view_form" model="ir.ui.view">
+        <field name="name">fee.structure.view.form</field>
+        <field name="model">fee.structure</field>
+        <field name="arch" type="xml">
+            <form string="">
+                <header>
+                    <button name="action_activate" string="Activate" class="oe_highlight" type="object" states="draft"/>
+                    <button name="suspend" type="object" string="Suspend" states="active"/>
+                    <button name="resume" type="object" string="Resume" states="inactive" class="oe_highlight"/>
+                    <button name="set_to_draft" type="object" string="Set Draft" states="active" groups="base.group_no_one"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_fees" type="object" attrs="{'invisible': [('fee_ids','=',[])]}"
+                                class="oe_stat_button" string="Fees Generated" icon="fa-money">
+                        </button>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="description"/>
+                            <field name="company_id" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="fee_group"/>
+                            <field name="academic_year"/>
+                        </group>
+                    </group>
+
+                    <separator string="One Time Fees"/>
+                    <field name="one_time_fees" context="{'default_generation_type': 'one_time'}">
+                        <tree editable="bottom" decoration-info="(not activated_once)">
+                            <field name="is_active"/>
+                            <field name="fees_type" domain="[('fees_type', '=', 'one_time')]"
+                                   context="{'default_fees_type': 'one_time'}"/>
+                            <field name="generation_type" invisible="1"/>
+                            <field name="name"/>
+                            <field name="payment_term"/>
+                            <field name="fees_amount"/>
+                            <field name="activated_once" invisible="1"/>
+                        </tree>
+                    </field>
+
+                    <separator string="Recurring Fees"/>
+                    <field name="recurring_fees"  context="{'default_generation_type': 'recurring'}">
+                        <tree decoration-info="(not activated_once)">
+                            <field name="is_active"/>
+                            <field name="fees_type"/>
+                            <field name="generation_type" invisible="1"/>
+                            <field name="interval_number"/>
+                            <field name="interval_type"/>
+                            <field name="nextcall"/>
+                            <field name="payment_term"/>
+                            <field name="fees_amount"/>
+                            <field name="activated_once" invisible="1"/>
+                        </tree>
+                        <form>
+                            <group>
+                                <group>
+                                    <field name="fees_type" domain="[('fees_type', '=', 'recurring')]"
+                                   context="{'default_fees_type': 'recurring'}"/>
+                                    <field name="payment_term"/>
+                                    <field name="fees_amount"/>
+                                    <field name="generation_type" invisible="1"/>
+                                </group>
+                                <group>
+                                    <field name="name"/>
+                                    <label for="interval_number" string="Execute Every"/>
+                                    <div>
+                                        <field name="interval_number" class="oe_inline" required="1"/>
+                                        <field name="interval_type" class="oe_inline" required="1"/>
+                                    </div>
+                                    <field name="nextcall" required="1"/>
+                                    <field name="is_active"/>
+                                    <field name="activated_once" invisible="1"/>
+                                </group>
+                            </group>
+                            <field name="execution_date_lines" readonly="1" groups="base.group_no_one" widget="many2many_tags"/>
+                        </form>
+                    </field>
+                    <field name="fee_ids" invisible="1"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_fee_structure_line" model="ir.ui.view">
+        <field name="name">Fee Structure Line Form</field>
+        <field name="model">fee.structure.line</field>
+        <field name="arch" type="xml">
+            <form string="Fee Structure Line">
+                <group>
+                    <group>
+                        <field name="fees_type" domain="[('fees_type', '=', 'recurring')]"/>
+                        <field name="name"/>
+                        <field name="fees_amount"/>
+                    </group>
+                    <group>
+                        <field name="payment_term"/>
+                        <field name="generation_type"/>
+                    </group>
+                    <group>
+                        <field name="is_active"/>
+                    </group>
+                    <group attrs="{'invisible': [('generation_type', '=', 'one_time')]}">
+                        <label for="interval_number" string="Execute Every"/>
+                        <div>
+                            <field name="interval_number" class="oe_inline" required="1"/>
+                            <field name="interval_type" class="oe_inline" required="1"/>
+                        </div>
+                        <field name="nextcall" required="1"/>
+                    </group>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <record id="fee_structure_view_tree" model="ir.ui.view">
+        <field name="name">fee.structure.view.tree</field>
+        <field name="model">fee.structure</field>
+        <field name="arch" type="xml">
+            <tree string="Fees Structure">
+                <field name="name"/>
+                <field name="fee_group"/>
+                <field name="academic_year"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="fee_structure_action" model="ir.actions.act_window">
+        <field name="name">Fee Structures</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">fee.structure</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+</odoo>

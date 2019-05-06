@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <t t-name="smart_accounting.ActivityNewPayment">
+        <li class="o_smart_accounting_navbar_item">
+            <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false" title="New Payment" href="#">
+                <i class="fa fa-money"/>
+            </a>
+        </li>
+    </t>
+
+</odoo>

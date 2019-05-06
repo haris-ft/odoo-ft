@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="collection_report_wizard_view" model="ir.ui.view">
+        <field name="name">collection.report.wizard.view</field>
+        <field name="model">collection.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Collection Report">
+                <group>
+                    <group>
+                        <field name="type" widget="radio"/>
+                        <field name="from_date" attrs="{'invisible':[('type', '=', 'daily')]}"/>
+                        <field name="to_date" attrs="{'invisible':[('type', '=', 'daily')]}"/>
+                        <field name="date" attrs="{'invisible':[('type', '=', 'period')]}"/>
+                        <field name="journal_type" widget="many2many_tags"/>
+                    </group>
+
+                    <group>
+                        <field name="standard"  widget="many2many_tags" />
+                        <field name="division"  widget="many2many_tags" domain="[('standard_id','=',standard)]"/>
+                    </group>
+
+                </group>
+
+                <footer>
+                    <button name="generate_report" class="oe_highlight" type="object" string="Print"/>
+                    <button special="cancel" string="Discard"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+
+    <record model="ir.actions.act_window" id="act_fee_collection_report">
+        <field name="name">Collection Report</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">collection.wizard</field>
+        <field name="view_mode">form</field>
+        <!--        <field name="target">new</field>-->
+    </record>
+
+
+</odoo>

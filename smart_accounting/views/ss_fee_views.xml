@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <record id="view_ss_fee_form" model="ir.ui.view">
+        <field name="name">Fees Form</field>
+        <field name="model">ss.fee</field>
+        <field name="arch" type="xml">
+            <form string="Fees">
+                <header>
+                    <button name="action_fee_payment" string="Register Payment" type="object" class="oe_highlight"
+                            states="open"/>
+                    <button name="validate" type="object" string="Validate" class="oe_highlight" states="draft"/>
+                    <button name="force_open" string="Force Open" type="object" states="validated"
+                            groups="base.group_no_one"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,validated,open,paid"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_payments" type="object" attrs="{'invisible': [('payment_ids','=',[])]}"
+                                class="oe_stat_button" string="Payments" icon="fa-money">
+                        </button>
+                        <button name="action_view_invoice" type="object" attrs="{'invisible': [('invoice_id','=',False)]}"
+                                class="oe_stat_button" string="Invoice" icon="fa-list">
+                        </button>
+                    </div>
+                    <h2>
+                        <field name="name"/>
+                    </h2>
+                    <group>
+                        <group>
+                            <field name="partner_type" invisible="1"/>
+                            <field name="student_id" attrs="{'required': [('partner_type', '=', 'student')],
+                            'invisible': [('partner_type', '!=', 'student')]}"/>
+                            <field name="partner_id"/>
+                            <field name="course_id" attrs="{'invisible': [('partner_type', '!=', 'student')]}"
+                                   readonly="True" />
+                            <field name="standard_id" attrs="{'invisible': [('partner_type', '!=', 'student')]}"
+                                   readonly="True"/>
+                            <field name="division_id" attrs="{'invisible': [('partner_type', '!=', 'student')]}"
+                                   readonly="True"/>
+                        </group>
+                        <group>
+                            <field name="mature_date"/>
+                            <field name="academic_year"/>
+                            <field name="company_id"/>
+                            <field name="currency_id"/>
+                            <field name="description"/>
+                        </group>
+                        <group>
+                            <field name="fee_type"/>
+                            <label for="amount"/>
+                            <h2><field name="amount"/></h2>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page name="fee_details" string="Fee Details">
+                            <group>
+                                <group>
+                                    <field name="fee_account_id"/>
+                                    <field name="account_id" invisible="1"/>
+                                    <field name="created_from_fee_structure"/>
+                                    <field name="fee_structure_id" attrs="{'invisible': [('created_from_fee_structure','=',False)]}"/>
+                                    <field name="fee_structure_line_id" attrs="{'invisible': [('created_from_fee_structure','=',False)]}"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Accounting" name="accounting" states="draft,validated,open,paid">
+                            <group>
+                                <group>
+                                    <field name="to_invoice"/>
+                                    <field name="journal_id"/>
+                                </group>
+                                <group>
+                                    <field name="move_id"/>
+                                    <field name="invoice_id"/>
+                                </group>
+                            </group>
+                            <group col="4" colspan="2">
+                                <field name="residual"/>
+                                <field name="account_id"/>
+                                <field name="reconciled"/>
+                            </group>
+                            <field name="fee_payment_ids"/>
+                            <field name="payment_ids" invisible="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_ss_fee_tree" model="ir.ui.view">
+        <field name="name">Fees Tree</field>
+        <field name="model">ss.fee</field>
+        <field name="arch" type="xml">
+            <tree string="Fees" decoration-danger="state == 'open'" decoration-muted="state == 'paid'"
+                  decoration-info="state == 'advanced'">
+                <field name="mature_date"/>
+                <field name="name"/>
+                <field name="ref_name"/>
+                <field name="partner_id"/>
+                <field name="academic_year"/>
+                <field name="course_id"/>
+                <field name="company_id"/>
+                <field name="standard_id"/>
+                <field name="division_id"/>
+                <field name="fee_type"/>
+                <field name="amount"/>
+                <field name="residual"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_ss_fee_academics_current" model="ir.actions.act_window">
+        <field name="name">Current Fees</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">ss.fee</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('partner_type', '=', 'student'), ('state', 'in', ['open','paid'])]</field>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+            <!-- Add Text Here -->
+          </p><p>
+            <!-- More details about what a user can do with this object will be OK -->
+          </p>
+        </field>
+    </record>
+
+    <record id="action_ss_fee_academics_upcoming" model="ir.actions.act_window">
+        <field name="name">Academic Fees</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">ss.fee</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('partner_type', '=', 'student'), ('state', 'in', ['validated'])]</field>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+            <!-- Add Text Here -->
+          </p><p>
+            <!-- More details about what a user can do with this object will be OK -->
+          </p>
+        </field>
+    </record>
+
+    <record id="action_ss_fee_academics" model="ir.actions.act_window">
+        <field name="name">Academic Fees</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">ss.fee</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('partner_type', '=', 'student')]</field>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+            <!-- Add Text Here -->
+          </p><p>
+            <!-- More details about what a user can do with this object will be OK -->
+          </p>
+        </field>
+    </record>
+
+    <record id="action_ss_fee_external" model="ir.actions.act_window">
+        <field name="name">Academic Fees</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">ss.fee</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('partner_type', '=', 'external')]</field>
+        <field name="context" eval="{'default_partner_type': 'external'}"/>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+            <!-- Add Text Here -->
+          </p><p>
+            <!-- More details about what a user can do with this object will be OK -->
+          </p>
+        </field>
+    </record>
+
+</odoo>

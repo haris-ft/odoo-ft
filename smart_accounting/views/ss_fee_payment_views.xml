@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <record id="view_fee_account_payment_tree" model="ir.ui.view">
+        <field name="name">fee.account.payment.tree</field>
+        <field name="model">account.payment</field>
+        <field name="inherit_id" ref="account.view_account_payment_tree"/>
+        <field name="mode">primary</field>
+        <field name="priority" eval="20"/>
+        <field name="arch" type="xml">
+            <field name="partner_id" position="attributes">
+                <attribute name="string">Student</attribute>
+            </field>
+            <field name="state" position="after">
+                <field name="fee_ids" invisible="1"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_fee_account_payment_search" model="ir.ui.view">
+        <field name="name">fee.account.payment.search</field>
+        <field name="model">account.payment</field>
+        <field name="priority" eval="20"/>
+        <field name="arch" type="xml">
+            <search string="Payments">
+                <field name="name" filter_domain="['|', ('name','ilike',self), ('communication','ilike',self)]" string="Description"/>
+                <separator/>
+                <field name="partner_id" />
+                <field name="journal_id" />
+                <field name="company_id" groups="base.group_multi_company" />
+                <separator/>
+                <filter string="Draft" domain="[('state','=','draft')]" name='state_draft'/>
+                <filter string="Open" domain="[('state','=','open')]" name='state_open'/>
+                <filter string="Paid" domain="[('state','=','paid')]"/>
+                <separator/>
+                <filter string="Partner" domain="[]" context="{'group_by': 'partner_id'}"/>
+                <filter string="Journal" domain="[]" context="{'group_by': 'journal_id'}"/>
+                <filter string="Payment Method" domain="[]" context="{'group_by': 'payment_method_id'}"/>
+                <filter string="State" domain="[]" context="{'group_by': 'state'}"/>
+                <filter string="Currency" domain="[]" context="{'group_by': 'currency_id'}" groups="base.group_multi_currency"/>
+                <filter string="Company" domain="[]" context="{'group_by': 'company_id'}" groups="base.group_multi_company"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_fee_account_payment_form" model="ir.ui.view">
+        <field name="name">fee.account.payment.form</field>
+        <field name="model">account.payment</field>
+        <field name="inherit_id" ref="account.view_account_payment_form"/>
+        <field name="mode">primary</field>
+        <field name="priority" eval="20"/>
+        <field name="arch" type="xml">
+            <button name="button_invoices" position="replace">
+                <button class="oe_stat_button" name="button_fees"
+                    string="Fees" type="object"
+                    attrs="{'invisible':[('has_fees','=',False)]}" icon="fa-bars"/>
+            </button>
+            <sheet position="replace">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" name="button_journal_entries"
+                                string="Journal Items" type="object"
+                                groups="account.group_account_user"
+                                attrs="{'invisible':[('move_line_ids','=',[])]}" icon="fa-bars"/>
+                        <field name="move_line_ids" invisible="1"/>
+                        <button class="oe_stat_button" name="open_payment_matching_screen"
+                                string="Payment Matching" type="object"
+                                attrs="{'invisible':[('move_reconciled','=',True)]}" icon="fa-university"/>
+                        <field name="has_invoices" invisible="1"/>
+                        <field name="move_reconciled" invisible="1"/>
+                    </div>
+                    <field name="id" invisible="1"/>
+                    <div class="oe_title" attrs="{'invisible': [('state', '=', 'draft')]}">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="payment_type" invisible="1"/>
+                            <field name="partner_type" invisible="1"/>
+                            <field name="without_student" invisible="1"/>
+                            <field name="student_id" attrs="{'required': [('without_student','=',False)],
+                            'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="total_due_amount" states="draft"/>
+                        </group>
+                        <group>
+                            <field name="course_id"/>
+                            <field name="standard_id"/>
+                            <field name="division_id"/>
+                            <field name="total_advance_amount" states="draft"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="currency_id" options="{'no_create': True, 'no_open': True}" groups="base.group_multi_currency" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="journal_id" widget="selection" domain="[('type', 'in', ['bank', 'cash'])]"
+                                   attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="destination_journal_id" invisible="1"/>
+                            <field name="hide_payment_method" invisible="1"/>
+                            <field name="payment_method_id" string=" " widget="radio" attrs="{'invisible': [('hide_payment_method', '=', True)], 'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="payment_method_code" invisible="1"/>
+                            <field name="amount" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                        </group>
+                        <group>
+                            <field name="payment_date" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="applied_for" widget="radio"/>
+                            <field name="fee_type_ids" widget="many2many_tags"
+                                   attrs="{'invisible': [('applied_for','!=', 'fee_type')],
+                                   'required': [('applied_for','=', 'fee_type')]}"/>
+                        </group>
+                        <group attrs="{'invisible': [('fee_payment_difference', '=', 0.0)]}">
+                            <label for="fee_payment_difference"/>
+                            <div>
+                                <field name="fee_payment_difference"/>
+                                <field name="fee_payment_difference_handling" widget="radio" nolabel="1"/>
+                            </div>
+                        </group>
+                        <group  class="oe_edit_only" states="draft">
+                            <field name="with_discount" widget="boolean_toggle"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Fees Applicable">
+                            <group col="4" colspan="2">
+                                <field name="total_due_receivable" states="draft"/>
+                                <field name="pay_all" states="draft"/>
+                                <field name="total_advance_receivable" states="draft"/>
+                            </group>
+                            <field name="payment_lines" options="{'no_create': True}">
+                                <tree string="Payment Lines" editable="bottom" create="false" delete="false"
+                                      decoration-danger="state == 'open'" decoration-success="state == 'validated'"
+                                      decoration-info="state in ('advanced', 'paid')"
+                                      decoration-bf="discounted_residual == 0.0 or current_pay_amount > 0.0">
+                                    <field name="mature_date"/>
+                                    <field name="name"/>
+                                    <field name="ref_name"/>
+                                    <field name="fee_type"/>
+                                    <field name="amount"/>
+                                    <field name="state" invisible="1"/>
+                                    <field name="fee_id" invisible="1"/>
+                                    <field name="fee_payment_id" invisible="1" force_save="1"/>
+                                    <field name="residual"/>
+                                    <field name="discount_method" invisible="1"/>
+                                    <field name="discount_mode" force_save="1"
+                                           attrs="{
+                                           'readonly': [('discount_method', '=', 'auto')],
+                                           'column_invisible': [('parent.with_discount', '=', False)]
+                                           }"/>
+                                    <field name="discount"  force_save="1"
+                                           attrs="{
+                                           'readonly': [('discount_method', '=', 'auto')],
+                                           'column_invisible': [('parent.with_discount', '=', False)]
+                                           }"/>
+                                    <field name="discounted_residual" sum="Total Payable"/>
+                                    <field name="current_pay_amount" required="1" sum="Total To Pay"/>
+                                    <field name="currency_id" invisible="1"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Discount Settings" attrs="{'invisible': [('with_discount', '!=', True)]}">
+                            <group>
+                                <field name="discount_method" widget="radio"/>
+                            </group>
+                            <group attrs="{'invisible': [('discount_method', '=', 'manual')]}">
+                                <group>
+                                    <field name="discount_mode" widget="radio" class="oe_horizontal"
+                                           attrs="{'required': [('with_discount', '=', True)]}"/>
+                                    <field name="discount" attrs="{'required': [('with_discount', '=', True)]}"/>
+                                </group>
+                                <group>
+                                    <field name="discount_distribution" attrs="{'required': [('with_discount', '=', True)]}"/>
+                                    <field name="discount_fee_type_ids" attrs="{
+                                    'invisible': [('discount_distribution', '=', 'all')],
+                                    'required': [('discount_distribution', '=', 'fee_type')]
+                                    }" widget="many2many_tags"/>
+
+                                </group>
+                            </group>
+                            <group col="4" colspan="2">
+                                <field name="discount_account_id" attrs="{'required': [('with_discount', '=', True)]}"/>
+                                <field name="discount_journal_id"/>
+                                <field name="discount_move"/>
+                            </group>
+                        </page>
+                        <page string="Accounting" name="accounting" attrs="{'invisible': [('fee_payment_difference', '=', 0.0)]}">
+                            <group>
+                                <group>
+                                    <field name="partner_id" required="1" attrs="{'readonly': [('state', '!=', 'draft')]}"
+                                   options="{'no_create': True}"/>
+                                </group>
+                                <group attrs="{'invisible': [('fee_payment_difference_handling', '!=', 'round_off')]}">
+                                    <field name="round_off_account"
+                                           attrs="{'required': [('fee_payment_difference_handling', '=', 'round_off')]}"/>
+                                </group>
+                                <group attrs="{'invisible': [('fee_payment_difference_handling', '!=', 'advance')]}">
+                                    <field name="fee_advance_journal_id" />
+                                    <field name="fee_advance_account_id"
+                                           attrs="{'required': [('fee_payment_difference_handling', '=', 'advance')]}"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </sheet>
+        </field>
+    </record>
+
+    <record id="action_fee_account_payments" model="ir.actions.act_window">
+        <field name="name">Fee Payments</field>
+        <field name="res_model">account.payment</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'default_payment_type': 'inbound',
+            'default_partner_type': 'customer'}</field>
+        <field name="domain">[('student_id', '!=', None)]</field>
+        <field name="view_ids"
+                   eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_fee_account_payment_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_fee_account_payment_form')})]"/>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+              Click to register a payment
+            </p><p>
+              Payments are used to register liquidity movements (send, collect or transfer money).
+              You can then process those payments by your own means or by using installed facilities.
+            </p>
+        </field>
+    </record>
+
+    <record id="view_ss_payment_lines_tree" model="ir.ui.view">
+        <field name="name">Account Payment Line Tree</field>
+        <field name="model">account.payment.line</field>
+        <field name="arch" type="xml">
+            <tree string="Payment Lines">
+                <field name="mature_date"/>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="academic_year"/>
+                <field name="course_id"/>
+                <field name="company_id"/>
+                <field name="standard_id"/>
+                <field name="division_id"/>
+                <field name="fee_type"/>
+                <field name="amount"/>
+                <field name="state"/>
+                <field name="fee_id" invisible="1"/>
+                <field name="current_pay_amount"/>
+                <field name="currency_id" invisible="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wizard_fee_account_payment" model="ir.ui.view">
+        <field name="name">wizard.account.payment.form</field>
+        <field name="model">account.payment</field>
+        <field name="priority" eval="20"/>
+        <field name="arch" type="xml">
+            <form>
+                <field name="payment_type" invisible="1"/>
+                <field name="partner_type" invisible="1"/>
+                <field name="without_student" invisible="1"/>
+                <field name="student_id" invisible="1"/>
+                <field name="fee_ids" invisible="1"/>
+                <field name="applied_for" invisible="1"/>
+                <field name="state" invisible="1"/>
+                <field name="round_off_account" invisible="1"/>
+                <group>
+                    <group>
+                        <field name="currency_id" options="{'no_create': True, 'no_open': True}" groups="base.group_multi_currency" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                        <field name="journal_id" widget="selection" domain="[('type', 'in', ['bank', 'cash'])]"
+                               attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                        <field name="destination_journal_id" invisible="1"/>
+                        <field name="hide_payment_method" invisible="1"/>
+                        <field name="payment_method_id" string=" " widget="radio" attrs="{'invisible': [('hide_payment_method', '=', True)], 'readonly': [('state', '!=', 'draft')]}"/>
+                        <field name="payment_method_code" invisible="1"/>
+                        <field name="amount" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                    </group>
+                    <group>
+                        <field name="payment_date" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                        <field name="communication"/>
+                    </group>
+                    <group attrs="{'invisible': [('fee_payment_difference', '=', 0.0)]}">
+                        <label for="fee_payment_difference" string="Round-Off Amount"/>
+                        <div>
+                            <field name="fee_payment_difference"/>
+                            <field name="fee_payment_difference_handling" invisible="1"/>
+                        </div>
+                    </group>
+                </group>
+                <field name="payment_lines" invisible="1">
+                    <tree string="Payment Lines">
+                        <field name="state" invisible="1"/>
+                        <field name="fee_id" invisible="1"/>
+                        <field name="fee_payment_id" invisible="1" force_save="1"/>
+                        <field name="residual"/>
+                        <field name="current_pay_amount" required="1" sum="Total To Pay"/>
+                        <field name="currency_id" invisible="1"/>
+                    </tree>
+                </field>
+                <footer>
+                    <button name="post" type="object" string="Pay" class="oe_highlight"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+
+</odoo>

@@ -1,0 +1,89 @@
+<odoo>
+
+     <template id="collection_report">
+        <div class="article">
+            <link rel="stylesheet" type="text/css" src="/smart_accounting/static/src/css/style.css"/>
+
+            <t t-set="o" t-value="o.with_context(lang=user.lang)"/>
+            <t t-foreach="docs" t-as="o">
+                <div class="page">
+                        <table class="header">
+                        <tr>
+                            <td style="width:15%;">
+
+                                <img t-if="o.company_id.logo" t-att-src="'data:image/png;base64,%s' % to_text(o.company_id.logo)"
+                                     height="110.0" width="110.0"/>
+                            </td>
+                            <td style="width:85%;"><h1> <div t-field="o.company_id.partner_id"/></h1>
+                                <h2>
+                                    <span t-field="o.company_id.street"/>,
+                                    <span t-field="o.company_id.street2"/>,
+                                    <span t-field="o.company_id.city"/>,
+                                    <span t-field="o.company_id.state_id" />-
+                                    <span t-field="o.company_id.zip"/><br/>
+                                    <span t-if="o.company_id.phone">Phone: <span t-field="o.company_id.phone"/></span>  <br/>
+                                    <span t-if="o.company_id.email">Email: <span t-field="o.company_id.email"/></span> <br/>
+                                    <span t-if="o.company_id.website">Website: <span t-field="o.company_id.website"/></span>
+                                </h2>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th colspan="3">Collection Report</th>
+                        </tr>
+
+                    </table>
+
+                      <table class="tble">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Standard</th>
+                                <th>Division</th>
+                                <th>Payment Date</th>
+                                <th>Reference No</th>
+                                <th>Fee Type</th>
+                                <th>Mode</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                          <tr t-foreach="get_report_record(data)" t-as="line">
+                              <td><span t-esc="line['name']"/></td>
+                              <td><span t-esc="o.standard"/></td>
+                               <td><span t-esc="o.division"/></td>
+                              <td><span t-esc="line['date']"/></td>
+                               <td><span t-esc="line['ref_name']"/></td>
+                              <t t-if="line['applied_for'] == 'all'">
+                                   <td><span t-esc="line['applied_for']"/></td>
+                              </t>
+
+                              <t t-if="line['applied_for'] == 'fee_type'">
+                                  <td><span t-esc="line['fee_type']"/></td>
+                              </t>
+
+                               <td><span t-esc="line['mode']"/></td>
+                               <td><span t-esc="line['amount']" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></td>
+                          </tr>
+                      </table>
+
+                </div>
+            </t>
+        </div>
+     </template>
+
+
+     <template id="report_fee_collection">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="smart_accounting.collection_report" t-lang="user.lang"/>
+            </t>
+        </t>
+    </template>
+
+    <report id="fees_collection_action"
+            model="collection.wizard"
+            string="Collection Report"
+            report_type="qweb-pdf"
+            name="smart_accounting.report_fee_collection"
+            file="smart_accounting.report_fee_collection"/>
+</odoo>

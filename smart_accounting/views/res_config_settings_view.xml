@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <record id="res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.smartschool</field>
+        <field name="model">res.config.settings</field>
+        <field name="priority" eval="11"/>
+        <field name="inherit_id" ref="smartschool_base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+
+            <div class="app_settings_block" position="inside">
+                <h2>Fee Payment</h2>
+                <div class="row mt16 o_settings_container">
+                    <div class="col-xs-12 col-md-6 o_setting_box">
+                        <div class="o_setting_right_pane">
+                            <label for="default_discount_journal_id"/>
+<!--                                <span class="fa fa-lg fa-building-o" title="Values set here are company-specific." groups="base.group_multi_company"/>-->
+                            <div class="row">
+                                <div class="text-muted col-md-8">
+                                    Set Default Discount Journal.
+                                </div>
+                            </div>
+                            <div class="content-group">
+                                <div class="mt16">
+                                    <field name="default_discount_journal_id"
+                                        class="o_light_label"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-12 col-md-6 o_setting_box" title="Defaults">
+                        <div class="o_setting_right_pane">
+                            <label for="default_discount_account_id"/>
+                            <div class="row">
+                                <div class="text-muted col-md-8">
+                                    Set Default Discount Account.
+                                </div>
+                            </div>
+                            <div class="content-group">
+                                <div class="mt16">
+                                    <field name="default_discount_account_id"
+                                        class="o_light_label"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-12 col-md-6 o_setting_box">
+                        <div class="o_setting_right_pane">
+                            <label for="default_fee_advance_journal_id"/>
+<!--                                <span class="fa fa-lg fa-building-o" title="Values set here are company-specific." groups="base.group_multi_company"/>-->
+                            <div class="row">
+                                <div class="text-muted col-md-8">
+                                    Set Default Advance Payment Journal.
+                                </div>
+                            </div>
+                            <div class="content-group">
+                                <div class="mt16">
+                                    <field name="default_fee_advance_journal_id"
+                                        class="o_light_label"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-12 col-md-6 o_setting_box" title="Defaults">
+                        <div class="o_setting_right_pane">
+                            <label for="default_advance_account_id"/>
+                            <div class="row">
+                                <div class="text-muted col-md-8">
+                                    Set Default Advance Payment Account.
+                                </div>
+                            </div>
+                            <div class="content-group">
+                                <div class="mt16">
+                                    <field name="default_advance_account_id"
+                                        class="o_light_label"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-12 col-md-6 o_setting_box" title="Defaults">
+                        <div class="o_setting_right_pane">
+                            <label for="default_round_off_account_id"/>
+                            <div class="row">
+                                <div class="text-muted col-md-8">
+                                    Set Default Round-Off Account.
+                                </div>
+                            </div>
+                            <div class="content-group">
+                                <div class="mt16">
+                                    <field name="default_round_off_account_id"
+                                        class="o_light_label"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </field>
+    </record>
+
+    <record id="fee_config_settings_action" model="ir.actions.act_window">
+        <field name="name">Settings</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="target">inline</field>
+        <field name="context">{'module' : 'smartschool_base'}</field>
+    </record>
+
+</odoo>

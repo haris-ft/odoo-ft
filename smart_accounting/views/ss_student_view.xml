@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Inherit Form View to Modify it -->
+    <record id="smart_accounting_ss_student_inherit_view_form" model="ir.ui.view">
+        <field name="name">smart.accounting.ss.student.inherit.view.form</field>
+        <field name="model">ss.student</field>
+        <field name="inherit_id" ref="smartschool_base.view_ss_student_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//page[@name='remarks']" position="after">
+                <page string="Accounting">
+                    <group>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="view_fees_of_student" type="object"
+                                    class="oe_stat_button" string="Fees Generated" icon="fa-money">
+                            </button>
+                        </div>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="fee_group" required="1"/>
+                        </group>
+                        <group>
+                            <field name="fee_structure_id" required="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+<!--                            <field name="user_id" string="Related User" groups="base.group_no_one"/>-->
+                        </group>
+                        <group>
+<!--                            <field name="partner_id" string="Related Partner" readonly="1" group="base.group_no_one"/>-->
+                        </group>
+                    </group>
+
+                </page>
+            </xpath>
+            <header position="inside">
+                <button name="create_all_fees" type="object" string="Force Create Fees"
+                        attrs="{'invisible': [('fees_creation_initiated', '=', True)]}"/>
+                <field name="fees_creation_initiated" invisible="1"/>
+            </header>
+        </field>
+    </record>
+
+</odoo>
