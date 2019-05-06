@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 {
     "name":  "Smart Accounting",
     "summary":  "Accounting for smart school",
@@ -8,15 +9,12 @@
     "depends":  ['base', 'account_invoicing', 'smartschool_base'],
     "data":  [
         'data/smart_accounting_data.xml',
-        # 'views/fee_template_view.xml',
         'views/ss_fees_type_view.xml',
         'views/fee_structure_view.xml',
         'views/fee_group_view.xml',
         'views/ss_student_view.xml',
-        # 'views/account_invoice_view.xml',
         'views/ss_fee_payment_views.xml',
         'views/ss_fee_views.xml',
-        # 'views/fee_advance_payment.xml',
         'views/res_config_settings_view.xml',
         'views/templates.xml',
         'wizard/collection_report_view_wzd.xml',
@@ -29,4 +27,4 @@
     "installable":  True,
     "auto_install":  False,
 }
-# -*- coding: utf-8 -*-
+

@@ -8,4 +8,3 @@ from . import ss_student
 from . import ss_fee
 from . import ss_fee_payment
 from . import account_invoice
-# from . import fee_advance_payment
